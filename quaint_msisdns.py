@@ -45,7 +45,7 @@ def is_sequence(n):
     return True
 
 
-def is_quaint(no, prefix, nslice=(5, 6)):
+def is_quaint(no, nslice, repeat):
     """
     Tries to detect if given number is `quaint`
     where `quaint` means what author of this script
@@ -70,16 +70,15 @@ def is_quaint(no, prefix, nslice=(5, 6)):
                     yield element
 
     for s in nslice:
-        repeat = 2 if s == 6 else 3
+        _repeat = repeat if s == 6 else repeat + 1
         n = no[s:]
-        if any((
-                prefix in n, is_sequence(n),
-                len(set(unique_everseen(n))) < repeat)
-               ):
+        if ((is_sequence(n) or
+             len(set(unique_everseen(n))) < _repeat)):
+
             return True
 
 
-def find_quaint_numbers(_range):
+def find_quaint_numbers(_range, nslice=(5, 6), repeat=2):
     """
     Tries to generate an attractive msisdn
     number(s) from given range
@@ -87,8 +86,12 @@ def find_quaint_numbers(_range):
 
     prefix = str(_range[0])[4:]
     for no in xrange(*_range):
-        if is_quaint(no=str(no), prefix=prefix):
+        if prefix in str(no)[nslice[0]]:
             yield no
+        elif is_quaint(no=str(no),
+                       repeat=repeat,
+                       nslice=nslice):
+                yield no
 
 
 if __name__ == '__main__':
@@ -96,10 +99,9 @@ if __name__ == '__main__':
     s = []
     for idx, n in enumerate(sorted(find_quaint_numbers(PH_RANGE))):
         s.append(' +{0}{1} {2}{3}{4} {5}{6}{7} {8}{9}{10}'.format(*str(n)))
-
         if len(s) >= 5:
             print '\t'.join(s)
             s = []
             if not (idx + 1) % 3:
                 print
-    print
+    print idx
