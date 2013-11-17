@@ -104,4 +104,4 @@ if __name__ == '__main__':
             s = []
             if not (idx + 1) % 3:
                 print
-    print idx
+    print
