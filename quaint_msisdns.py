@@ -96,10 +96,10 @@ if __name__ == '__main__':
     s = []
     for idx, n in enumerate(sorted(find_quaint_numbers(PH_RANGE))):
         s.append(' +{0}{1} {2}{3}{4} {5}{6}{7} {8}{9}{10}'.format(*str(n)))
-        
+
         if len(s) >= 5:
             print '\t'.join(s)
             s = []
             if not (idx + 1) % 3:
-                print 
+                print
     print
