@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Generates an attractive msisdn numbers
+Generates attractive msisdn numbers
 from defined pool range
 
 Usage:
@@ -52,7 +52,7 @@ def is_quaint(no, prefix, nslice=(5, 6)):
     perceived as `quaint` ;)
 
     - nslice + repeat params can be used for tuning this alg
-      giving more quantity of `quaint msisdns`
+      giving more quantity but in general less attractive results
     """
 
     def unique_everseen(iterable, key=None):
@@ -94,9 +94,10 @@ def find_quaint_numbers(_range):
 if __name__ == '__main__':
     print
     s = []
-    for n in find_quaint_numbers(PH_RANGE):
+    for n in sorted(find_quaint_numbers(PH_RANGE)):
         s.append(str(n))
-        if len(s) >= 6:
+        if len(s) >= 7:
             print '\t'.join(s)
             s = []
+            print 
     print
