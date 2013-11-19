@@ -11,97 +11,29 @@ Usage:
     >> print set(q_gen)
 """
 
-__author__ = "Piotr Pawlaczek"
-__version__ = "1.0"
-__status__ = "Prototype"
+__author__ = "Jonathan Slenders, Piotr Pawlaczek"
+__version__ = "2.0"
+__status__ = "Improved Prototype"
 
-
-from itertools import ifilterfalse
-
-PH_RANGE = (
-    48732001501, 48732051501 + 1
-)
-
+PH_RANGE = (48732001501, 48732051502)
 
 def is_sequence(n):
-    """
-    Checks if given number is positive
-    or negative sequence
-    """
+    """ True if sequence. """
+    return n in '0123456789' or n in '9876543210'
 
-    first = int(n[0])
-    if int(n[1]) - 1 == first:
-        seq = 1
-    elif int(n[1]) + 1 == first:
-        seq = -1
-    else:
-        return False
-    for digit in n[1:]:
-        if (int(digit) == first + seq and seq) or \
-                (int(digit) == first - seq and not seq):
-            first = int(digit)
-        else:
-            return False
-    return True
+def is_quaint(n):
+    """ True when this is a quant number.  """
+    return is_sequence(n[6:]) or len(set(n[5:])) < 3 or len(set(n[6:])) < 2
 
-
-def is_quaint(no, nslice, repeat):
-    """
-    Tries to detect if given number is `quaint`
-    where `quaint` means what author of this script
-    perceived as `quaint` ;)
-
-    - nslice + repeat params can be used for tuning this alg
-      giving more quantity but in general less attractive results
-    """
-
-    def unique_everseen(iterable, key=None):
-        seen = set()
-        seen_add = seen.add
-        if key is None:
-            for element in ifilterfalse(seen.__contains__, iterable):
-                seen_add(element)
-                yield element
-        else:
-            for element in iterable:
-                k = key(element)
-                if k not in seen:
-                    seen_add(k)
-                    yield element
-
-    for s in nslice:
-        _repeat = repeat if s == 6 else repeat + 1
-        n = no[s:]
-        if ((is_sequence(n) or
-             len(set(unique_everseen(n))) < _repeat)):
-
-            return True
-
-
-def find_quaint_numbers(_range, nslice=(5, 6), repeat=2):
-    """
-    Tries to generate an attractive msisdn
-    number(s) from given range
-    """
-
-    prefix = str(_range[0])[4:]
-    for no in xrange(*_range):
-        if prefix in str(no)[nslice[0]]:
-            yield no
-        elif is_quaint(no=str(no),
-                       repeat=repeat,
-                       nslice=nslice):
-                yield no
-
+def find_quaint_numbers(range_):
+    """ Iterator which yields quaint numbers in this range. """
+    return (n for n in xrange(*range_) if is_quaint(str(n)))
 
 if __name__ == '__main__':
     print
-    s = []
-    for idx, n in enumerate(sorted(find_quaint_numbers(PH_RANGE))):
-        s.append(' +{0}{1} {2}{3}{4} {5}{6}{7} {8}{9}{10}'.format(*str(n)))
-        if len(s) >= 5:
-            print '\t'.join(s)
-            s = []
-            if not (idx + 1) % 3:
-                print
+    print ''.join(' +{0}{1} {2}{3}{4} {5}{6}{7} {8}{9}{10}'.format(*str(n)) + [
+            '\t', '\t', '\t', '\t', '\n',
+            '\t', '\t', '\t', '\t', '\n',
+            '\t', '\t', '\t', '\t', '\n\n'][i % 15]
+        for i, n in enumerate(find_quaint_numbers(PH_RANGE)))
     print
